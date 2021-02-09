@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+import sys, re
+
+regs = []
+
+def main():
+    for line in sys.stdin:
+        line = line.strip()
+        parts = line.split(' ')
+        if line.endswith('(GP_LVL)') or line.endswith('(GP_LVL2)') or line.endswith('(GPIO_LVL3)'):
+            val = parts[1]
+            regs.append(int(val, 16))
+
+    if not regs:
+        raise Error("regs is empty")
+
+    for k, reg in enumerate(regs):
+        for i in range(32):
+            num = (32 * k) + i
+            index = int(num / 32)
+            bit = num % 32
+            status = (reg >> bit) & 1
+            print("GPIO%d = %d" % (num, status))
+
+if __name__ == '__main__':
+    main()
+        
